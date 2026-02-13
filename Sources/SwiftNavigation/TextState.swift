@@ -1,7 +1,7 @@
 import CustomDump
 import Foundation
 
-#if canImport(SwiftUI)
+#if canImport(SwiftUI) && !os(Android)
   import SwiftUI
 #endif
 
@@ -51,7 +51,7 @@ import Foundation
 public struct TextState: Equatable, Hashable, Sendable {
   fileprivate let storage: Storage
 
-  #if canImport(SwiftUI)
+  #if canImport(SwiftUI) && !os(Android)
     fileprivate var modifiers: [Modifier] = []
 
     fileprivate enum Modifier: Equatable, Hashable, Sendable {
@@ -118,7 +118,7 @@ public struct TextState: Equatable, Hashable, Sendable {
   //     unavailable.
   fileprivate enum Storage: Equatable, Hashable, @unchecked Sendable {
     indirect case concatenated(TextState, TextState)
-    #if canImport(SwiftUI)
+    #if canImport(SwiftUI) && !os(Android)
       case localizedStringKey(
         LocalizedStringKey,
         tableName: String?,
@@ -140,7 +140,7 @@ public struct TextState: Equatable, Hashable, Sendable {
       case (.verbatim(let lhs), .verbatim(let rhs)):
         return lhs == rhs
 
-      #if canImport(SwiftUI)
+      #if canImport(SwiftUI) && !os(Android)
         case (.concatenated, .localizedStringKey),
           (.localizedStringKey, .concatenated),
           (.concatenated, .localizedStringResource),
@@ -189,7 +189,7 @@ public struct TextState: Equatable, Hashable, Sendable {
         hasher.combine(first)
         hasher.combine(second)
 
-      #if canImport(SwiftUI)
+      #if canImport(SwiftUI) && !os(Android)
         case .localizedStringKey(let key, let tableName, let bundle, let comment):
           hasher.combine(key.formatted(tableName: tableName, bundle: bundle, comment: comment))
 
@@ -206,7 +206,7 @@ public struct TextState: Equatable, Hashable, Sendable {
 
 // MARK: - LocalizedStringResourceBox
 
-#if canImport(SwiftUI)
+#if canImport(SwiftUI) && !os(Android)
   private struct LocalizedStringResourceBox: @unchecked Sendable {
     // REVISIT: Make 'Any' into 'any Sendable' when minimum deployment target is iOS 18
     let value: Any
@@ -256,7 +256,7 @@ extension TextState {
     self.init(verbatim: String(content))
   }
 
-  #if canImport(SwiftUI)
+  #if canImport(SwiftUI) && !os(Android)
     public init(
       _ key: LocalizedStringKey,
       tableName: String? = nil,
@@ -285,7 +285,7 @@ extension TextState {
     .init(storage: .concatenated(lhs, rhs))
   }
 
-  #if canImport(SwiftUI)
+  #if canImport(SwiftUI) && !os(Android)
     public func baselineOffset(_ baselineOffset: CGFloat) -> Self {
       var `self` = self
       `self`.modifiers.append(.baselineOffset(baselineOffset))
@@ -406,7 +406,7 @@ extension TextState {
 
 // MARK: Accessibility
 
-#if canImport(SwiftUI)
+#if canImport(SwiftUI) && !os(Android)
   extension TextState {
     public enum AccessibilityTextContentType: String, Equatable, Hashable, Sendable {
       case console, fileSystem, messaging, narrative, plain, sourceCode, spreadsheet, wordProcessing
@@ -671,7 +671,7 @@ extension String {
     case .concatenated(let lhs, let rhs):
       self = String(state: lhs, locale: locale) + String(state: rhs, locale: locale)
 
-    #if canImport(SwiftUI)
+    #if canImport(SwiftUI) && !os(Android)
       case .localizedStringKey(let key, let tableName, let bundle, let comment):
         self = key.formatted(
           locale: locale,
@@ -690,7 +690,7 @@ extension String {
   }
 }
 
-#if canImport(SwiftUI)
+#if canImport(SwiftUI) && !os(Android)
   extension LocalizedStringKey {
     // NB: `LocalizedStringKey` conforms to `Equatable` but returns false for equivalent format
     //     strings. To account for this we reflect on it to extract and string-format its storage.
@@ -739,7 +739,7 @@ extension TextState: CustomDumpRepresentable {
       switch textState.storage {
       case .concatenated(let lhs, let rhs):
         output = dumpHelp(lhs) + dumpHelp(rhs)
-      #if canImport(SwiftUI)
+      #if canImport(SwiftUI) && !os(Android)
         case .localizedStringKey(let key, let tableName, let bundle, let comment):
           output = key.formatted(tableName: tableName, bundle: bundle, comment: comment)
         case .localizedStringResource(let resourceBox):
@@ -755,7 +755,7 @@ extension TextState: CustomDumpRepresentable {
           </\(name)>
           """
       }
-      #if canImport(SwiftUI)
+      #if canImport(SwiftUI) && !os(Android)
         for modifier in textState.modifiers {
           switch modifier {
           case .accessibilityHeading(let headingLevel):

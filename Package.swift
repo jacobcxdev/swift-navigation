@@ -2,6 +2,8 @@
 
 import PackageDescription
 
+let android = Context.environment["TARGET_OS_ANDROID"] ?? "0" != "0"
+
 let package = Package(
   name: "swift-navigation",
   platforms: [
@@ -36,7 +38,11 @@ let package = Package(
     .package(url: "https://github.com/pointfreeco/swift-custom-dump", from: "1.3.2"),
     .package(url: "https://github.com/pointfreeco/swift-perception", "1.3.4"..<"3.0.0"),
     .package(url: "https://github.com/pointfreeco/xctest-dynamic-overlay", from: "1.4.1"),
-  ],
+  ]
+    + (android ? [
+      .package(url: "https://source.skip.tools/skip-bridge.git", "0.16.4"..<"2.0.0"),
+      .package(url: "https://source.skip.tools/swift-jni.git", "0.3.1"..<"2.0.0"),
+    ] : []),
   targets: [
     .target(
       name: "SwiftNavigation",
@@ -64,6 +70,10 @@ let package = Package(
         .product(name: "CasePaths", package: "swift-case-paths"),
         .product(name: "IssueReporting", package: "xctest-dynamic-overlay"),
       ]
+        + (android ? [
+          .product(name: "SkipBridge", package: "skip-bridge"),
+          .product(name: "SwiftJNI", package: "swift-jni"),
+        ] : [])
     ),
     .testTarget(
       name: "SwiftUINavigationTests",
