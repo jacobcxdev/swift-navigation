@@ -1,4 +1,4 @@
-#if canImport(SwiftUI) && !os(Android)
+#if canImport(SwiftUI)
   import SwiftUI
 
   // NB: Moving `@available(tvOS, unavailable)` to the extension causes tvOS builds to fail
