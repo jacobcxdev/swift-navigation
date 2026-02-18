@@ -1,4 +1,4 @@
-#if canImport(SwiftUI) && !os(Android)
+#if canImport(SwiftUI)
   @_exported import CasePaths
   @_exported import SwiftNavigation
 #endif  // canImport(SwiftUI)
