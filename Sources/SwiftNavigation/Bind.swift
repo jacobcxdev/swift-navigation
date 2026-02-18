@@ -59,28 +59,32 @@
     var wrappedValue: Value { get nonmutating set }
   }
 
-  @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
-  extension AccessibilityFocusState: _Bindable {}
+  #if !os(Android)
+    @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
+    extension AccessibilityFocusState: _Bindable {}
 
-  @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
-  extension AccessibilityFocusState.Binding: _Bindable {}
+    @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
+    extension AccessibilityFocusState.Binding: _Bindable {}
 
-  @available(iOS 14, macOS 11, tvOS 14, watchOS 7, *)
-  extension AppStorage: _Bindable {}
+    @available(iOS 14, macOS 11, tvOS 14, watchOS 7, *)
+    extension AppStorage: _Bindable {}
+  #endif
 
   extension Binding: _Bindable {}
 
-  @available(iOS 14, macOS 11, tvOS 14, watchOS 7, *)
-  extension FocusedBinding: _Bindable {}
+  #if !os(Android)
+    @available(iOS 14, macOS 11, tvOS 14, watchOS 7, *)
+    extension FocusedBinding: _Bindable {}
 
-  @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
-  extension FocusState: _Bindable {}
+    @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
+    extension FocusState: _Bindable {}
 
-  @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
-  extension FocusState.Binding: _Bindable {}
+    @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
+    extension FocusState.Binding: _Bindable {}
 
-  @available(iOS 14, macOS 11, tvOS 14, watchOS 7, *)
-  extension SceneStorage: _Bindable {}
+    @available(iOS 14, macOS 11, tvOS 14, watchOS 7, *)
+    extension SceneStorage: _Bindable {}
+  #endif
 
   extension State: _Bindable {}
 #endif  // canImport(SwiftUI)
