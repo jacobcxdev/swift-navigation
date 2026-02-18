@@ -856,7 +856,19 @@ extension TextState: CustomDumpRepresentable {
     /// Note: Text concatenation (`+`) is unavailable in SkipSwiftUI, so concatenated
     /// text is flattened to a single verbatim string.
     public init(_ state: TextState) {
-      self = Text(verbatim: state.description)
+      self = Text(verbatim: state._plainText)
+    }
+  }
+
+  extension TextState {
+    /// Extracts the plain text content, flattening concatenation.
+    internal var _plainText: String {
+      switch storage {
+      case .concatenated(let lhs, let rhs):
+        return lhs._plainText + rhs._plainText
+      case .verbatim(let content):
+        return content
+      }
     }
   }
 #endif
