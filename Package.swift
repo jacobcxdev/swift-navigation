@@ -7,10 +7,10 @@ let android = Context.environment["TARGET_OS_ANDROID"] ?? "0" != "0"
 let package = Package(
   name: "swift-navigation",
   platforms: [
-    .iOS(.v16),
-    .macOS(.v13),
-    .tvOS(.v16),
-    .watchOS(.v9),
+    .iOS(.v13),
+    .macOS(.v10_15),
+    .tvOS(.v13),
+    .watchOS(.v6),
   ],
   products: [
     .library(
