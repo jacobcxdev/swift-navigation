@@ -1,4 +1,4 @@
-#if canImport(SwiftUI) && !os(Android)
+#if canImport(SwiftUI)
   import CasePaths
   import SwiftUI
 
@@ -78,13 +78,23 @@
     public func removeDuplicates(
       by isDuplicate: @Sendable @escaping (Value, Value) -> Bool
     ) -> Self where Value: Sendable {
-      .init(
-        get: { self.wrappedValue },
-        set: { newValue, transaction in
-          guard !isDuplicate(self.wrappedValue, newValue) else { return }
-          self.transaction(transaction).wrappedValue = newValue
-        }
-      )
+      #if os(Android)
+        .init(
+          get: { self.wrappedValue },
+          set: { newValue in
+            guard !isDuplicate(self.wrappedValue, newValue) else { return }
+            self.wrappedValue = newValue
+          }
+        )
+      #else
+        .init(
+          get: { self.wrappedValue },
+          set: { newValue, transaction in
+            guard !isDuplicate(self.wrappedValue, newValue) else { return }
+            self.transaction(transaction).wrappedValue = newValue
+          }
+        )
+      #endif
     }
   }
 
@@ -107,22 +117,41 @@
       fileID: StaticString = #fileID,
       line: UInt = #line
     ) -> Self {
-      Self(
-        get: { self.wrappedValue },
-        set: { newValue, transaction in
-          var oldDescription = ""
-          debugPrint(self.wrappedValue, terminator: "", to: &oldDescription)
-          var newDescription = ""
-          debugPrint(newValue, terminator: "", to: &newDescription)
-          print(
-            "\(prefix.isEmpty ? "\(Self.self)@\(fileID):\(line)" : prefix):",
-            oldDescription,
-            "→",
-            newDescription
-          )
-          self.transaction(transaction).wrappedValue = newValue
-        }
-      )
+      #if os(Android)
+        Self(
+          get: { self.wrappedValue },
+          set: { newValue in
+            var oldDescription = ""
+            debugPrint(self.wrappedValue, terminator: "", to: &oldDescription)
+            var newDescription = ""
+            debugPrint(newValue, terminator: "", to: &newDescription)
+            print(
+              "\(prefix.isEmpty ? "\(Self.self)@\(fileID):\(line)" : prefix):",
+              oldDescription,
+              "→",
+              newDescription
+            )
+            self.wrappedValue = newValue
+          }
+        )
+      #else
+        Self(
+          get: { self.wrappedValue },
+          set: { newValue, transaction in
+            var oldDescription = ""
+            debugPrint(self.wrappedValue, terminator: "", to: &oldDescription)
+            var newDescription = ""
+            debugPrint(newValue, terminator: "", to: &newDescription)
+            print(
+              "\(prefix.isEmpty ? "\(Self.self)@\(fileID):\(line)" : prefix):",
+              oldDescription,
+              "→",
+              newDescription
+            )
+            self.transaction(transaction).wrappedValue = newValue
+          }
+        )
+      #endif
     }
   }
 

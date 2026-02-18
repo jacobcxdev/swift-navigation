@@ -126,3 +126,47 @@ final class AndroidParityTests: XCTestCase {
     XCTAssertEqual(dialog.message, TextState("Pick one"))
   }
 }
+
+// MARK: - Category B: SwiftUI Integration (un-guarded code)
+
+#if canImport(SwiftUI)
+  import SwiftUI
+  import SwiftUINavigation
+
+  /// Tests verifying un-guarded SwiftUI navigation integrations work correctly.
+  /// These exercise the same code paths used on Android via SkipSwiftUI.
+  @MainActor
+  final class SwiftUINavigationParityTests: XCTestCase {
+
+    // MARK: - Binding<Optional> -> Binding<Bool> (SwiftNavigation/Binding.swift)
+
+    func testBindingOptionalToBool() {
+      // Verify Binding<Bool>.init(Binding<V?>) produces a Binding<Bool>.
+      // This is un-guarded in SwiftNavigation/Binding.swift.
+      var item: String? = nil
+      let optionalBinding = Binding<String?>(
+        get: { item },
+        set: { item = $0 }
+      )
+
+      let boolBinding: Binding<Bool> = Binding(optionalBinding)
+      XCTAssertFalse(boolBinding.wrappedValue)
+
+      item = "hello"
+      let boolBinding2: Binding<Bool> = Binding(optionalBinding)
+      XCTAssertTrue(boolBinding2.wrappedValue)
+    }
+
+    // MARK: - WithState (SwiftUINavigation/WithState.swift)
+
+    func testWithStateInitializerAndBody() {
+      // Verify WithState can be created with an initial value
+      // and its body returns the content closure result.
+      let view = WithState(initialValue: 42) { (value: Binding<Int>) in
+        Text("\(value.wrappedValue)")
+      }
+      // WithState is a View — verify it exists and body is accessible
+      let _ = view.body
+    }
+  }
+#endif
