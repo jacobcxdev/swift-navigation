@@ -1,4 +1,4 @@
-#if canImport(SwiftUI)
+#if canImport(SwiftUI) && !os(Android)
   import CasePaths
   import SwiftUI
 
@@ -210,4 +210,4 @@
       }
     }
   }
-#endif  // canImport(SwiftUI)
+#endif  // canImport(SwiftUI) && !os(Android)

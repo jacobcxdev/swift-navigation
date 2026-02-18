@@ -1,4 +1,4 @@
-#if canImport(SwiftUI)
+#if canImport(SwiftUI) && !os(Android)
   import SwiftUI
 
   @available(iOS 14, tvOS 14, watchOS 7, *)
@@ -105,4 +105,4 @@
       }
     }
   }
-#endif  // canImport(SwiftUI)
+#endif  // canImport(SwiftUI) && !os(Android)

@@ -1,4 +1,4 @@
-#if canImport(SwiftUI)
+#if canImport(SwiftUI) && !os(Android)
   import SwiftUI
 
   #if canImport(UIKit)
@@ -109,4 +109,4 @@
       }
     }
   }
-#endif  // canImport(SwiftUI)
+#endif  // canImport(SwiftUI) && !os(Android)

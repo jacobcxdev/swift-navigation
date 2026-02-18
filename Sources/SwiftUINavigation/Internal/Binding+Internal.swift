@@ -1,4 +1,4 @@
-#if canImport(SwiftUI)
+#if canImport(SwiftUI) && !os(Android)
   import SwiftUI
 
   extension Binding where Value: Sendable {
@@ -22,4 +22,4 @@
       #endif
     }
   }
-#endif  // canImport(SwiftUI)
+#endif  // canImport(SwiftUI) && !os(Android)
