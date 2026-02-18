@@ -388,6 +388,48 @@ private func isUnlabeledArgument(_ label: String) -> Bool {
   label.firstIndex(where: { $0 != "." && !$0.isNumber }) == nil
 }
 
+#if os(Android)
+  import SwiftUI
+
+  extension ButtonRole {
+    /// Creates a `SwiftUI.ButtonRole` from `ButtonStateRole`.
+    public init(_ role: ButtonStateRole) {
+      switch role {
+      case .cancel:
+        self = .cancel
+      case .destructive:
+        self = .destructive
+      }
+    }
+  }
+
+  extension Button where Label == Text {
+    /// Initializes a `SwiftUI.Button` from `ButtonState` and an action handler.
+    @MainActor
+    public init<Action>(_ button: ButtonState<Action>, action: @escaping (Action?) -> Void) {
+      self.init(
+        role: button.role.map(ButtonRole.init),
+        action: { button.withAction(action) }
+      ) {
+        Text(button.label)
+      }
+    }
+
+    /// Initializes a `SwiftUI.Button` from `ButtonState` and an async action handler.
+    public init<Action: Sendable>(
+      _ button: ButtonState<Action>,
+      action: @escaping @Sendable (Action?) async -> Void
+    ) {
+      self.init(
+        role: button.role.map(ButtonRole.init),
+        action: { Task { await button.withAction(action) } }
+      ) {
+        Text(button.label)
+      }
+    }
+  }
+#endif
+
 @usableFromInline
 func typeName(_ type: Any.Type) -> String {
   var name = _typeName(type, qualified: true)

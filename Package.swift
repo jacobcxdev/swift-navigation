@@ -57,6 +57,9 @@ let package = Package(
         .product(name: "Perception", package: "swift-perception"),
         .product(name: "PerceptionCore", package: "swift-perception"),
       ]
+        + (android ? [
+          .product(name: "SkipFuseUI", package: "skip-fuse-ui"),
+        ] : [])
     ),
     .testTarget(
       name: "SwiftNavigationTests",

@@ -845,3 +845,21 @@ extension TextState: CustomDumpRepresentable {
     return dumpHelp(self)
   }
 }
+
+#if os(Android)
+  import SwiftUI
+
+  extension Text {
+    /// Creates a SwiftUI `Text` view from `TextState`.
+    ///
+    /// On Android, this handles verbatim and concatenated text (no rich text modifiers).
+    public init(_ state: TextState) {
+      switch state.storage {
+      case .concatenated(let first, let second):
+        self = Text(first) + Text(second)
+      case .verbatim(let content):
+        self = Text(verbatim: content)
+      }
+    }
+  }
+#endif

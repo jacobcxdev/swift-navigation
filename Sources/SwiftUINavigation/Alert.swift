@@ -1,4 +1,4 @@
-#if canImport(SwiftUI) && !os(Android)
+#if canImport(SwiftUI)
   import IssueReporting
   import SwiftUI
 
@@ -198,6 +198,7 @@
     }
   }
 
+  #if !os(Android)
   @available(
     iOS, introduced: 13, deprecated: 100000, message: "use 'View.alert(_:action:)' instead."
   )
@@ -274,4 +275,5 @@
       }
     }
   }
+  #endif  // !os(Android)
 #endif  // canImport(SwiftUI)
