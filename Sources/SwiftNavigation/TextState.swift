@@ -853,13 +853,10 @@ extension TextState: CustomDumpRepresentable {
     /// Creates a SwiftUI `Text` view from `TextState`.
     ///
     /// On Android, this handles verbatim and concatenated text (no rich text modifiers).
+    /// Note: Text concatenation (`+`) is unavailable in SkipSwiftUI, so concatenated
+    /// text is flattened to a single verbatim string.
     public init(_ state: TextState) {
-      switch state.storage {
-      case .concatenated(let first, let second):
-        self = Text(first) + Text(second)
-      case .verbatim(let content):
-        self = Text(verbatim: content)
-      }
+      self = Text(verbatim: state.description)
     }
   }
 #endif
