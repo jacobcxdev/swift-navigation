@@ -3,6 +3,8 @@ import Foundation
 
 #if canImport(SwiftUI) && !os(Android)
   import SwiftUI
+#elseif canImport(SkipSwiftUI)
+  import SkipSwiftUI
 #endif
 
 /// An equatable description of SwiftUI `Text`. Useful for storing rich text in feature models
@@ -51,7 +53,7 @@ import Foundation
 public struct TextState: Equatable, Hashable, Sendable {
   fileprivate let storage: Storage
 
-  #if canImport(SwiftUI) && !os(Android)
+  #if canImport(SwiftUI) || canImport(SkipSwiftUI)
     fileprivate var modifiers: [Modifier] = []
 
     fileprivate enum Modifier: Equatable, Hashable, Sendable {
@@ -83,15 +85,17 @@ public struct TextState: Equatable, Hashable, Sendable {
       case expanded
       case standard
 
-      @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
-      var toSwiftUI: SwiftUI.Font.Width {
-        switch self {
-        case .compressed: return .compressed
-        case .condensed: return .condensed
-        case .expanded: return .expanded
-        case .standard: return .standard
+      #if canImport(SwiftUI) && !os(Android)
+        @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
+        var toSwiftUI: SwiftUI.Font.Width {
+          switch self {
+          case .compressed: return .compressed
+          case .condensed: return .condensed
+          case .expanded: return .expanded
+          case .standard: return .standard
+          }
         }
-      }
+      #endif
     }
 
     public enum LineStylePattern: String, Equatable, Hashable, Sendable {
@@ -101,16 +105,18 @@ public struct TextState: Equatable, Hashable, Sendable {
       case dot
       case solid
 
-      @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
-      var toSwiftUI: SwiftUI.Text.LineStyle.Pattern {
-        switch self {
-        case .dash: return .dash
-        case .dashDot: return .dashDot
-        case .dashDotDot: return .dashDotDot
-        case .dot: return .dot
-        case .solid: return .solid
+      #if canImport(SwiftUI) && !os(Android)
+        @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
+        var toSwiftUI: SwiftUI.Text.LineStyle.Pattern {
+          switch self {
+          case .dash: return .dash
+          case .dashDot: return .dashDot
+          case .dashDotDot: return .dashDotDot
+          case .dot: return .dot
+          case .solid: return .solid
+          }
         }
-      }
+      #endif
     }
   #endif
 
@@ -285,7 +291,7 @@ extension TextState {
     .init(storage: .concatenated(lhs, rhs))
   }
 
-  #if canImport(SwiftUI) && !os(Android)
+  #if canImport(SwiftUI) || canImport(SkipSwiftUI)
     public func baselineOffset(_ baselineOffset: CGFloat) -> Self {
       var `self` = self
       `self`.modifiers.append(.baselineOffset(baselineOffset))
@@ -406,41 +412,45 @@ extension TextState {
 
 // MARK: Accessibility
 
-#if canImport(SwiftUI) && !os(Android)
+#if canImport(SwiftUI) || canImport(SkipSwiftUI)
   extension TextState {
     public enum AccessibilityTextContentType: String, Equatable, Hashable, Sendable {
       case console, fileSystem, messaging, narrative, plain, sourceCode, spreadsheet, wordProcessing
 
-      @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
-      var toSwiftUI: SwiftUI.AccessibilityTextContentType {
-        switch self {
-        case .console: return .console
-        case .fileSystem: return .fileSystem
-        case .messaging: return .messaging
-        case .narrative: return .narrative
-        case .plain: return .plain
-        case .sourceCode: return .sourceCode
-        case .spreadsheet: return .spreadsheet
-        case .wordProcessing: return .wordProcessing
+      #if canImport(SwiftUI) && !os(Android)
+        @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
+        var toSwiftUI: SwiftUI.AccessibilityTextContentType {
+          switch self {
+          case .console: return .console
+          case .fileSystem: return .fileSystem
+          case .messaging: return .messaging
+          case .narrative: return .narrative
+          case .plain: return .plain
+          case .sourceCode: return .sourceCode
+          case .spreadsheet: return .spreadsheet
+          case .wordProcessing: return .wordProcessing
+          }
         }
-      }
+      #endif
     }
 
     public enum AccessibilityHeadingLevel: String, Equatable, Hashable, Sendable {
       case h1, h2, h3, h4, h5, h6, unspecified
 
-      @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
-      var toSwiftUI: SwiftUI.AccessibilityHeadingLevel {
-        switch self {
-        case .h1: return .h1
-        case .h2: return .h2
-        case .h3: return .h3
-        case .h4: return .h4
-        case .h5: return .h5
-        case .h6: return .h6
-        case .unspecified: return .unspecified
+      #if canImport(SwiftUI) && !os(Android)
+        @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
+        var toSwiftUI: SwiftUI.AccessibilityHeadingLevel {
+          switch self {
+          case .h1: return .h1
+          case .h2: return .h2
+          case .h3: return .h3
+          case .h4: return .h4
+          case .h5: return .h5
+          case .h6: return .h6
+          case .unspecified: return .unspecified
+          }
         }
-      }
+      #endif
     }
   }
 
@@ -470,29 +480,31 @@ extension TextState {
       return `self`
     }
 
-    @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
-    public func accessibilityLabel(
-      _ resource: LocalizedStringResource
-    ) -> Self {
-      var `self` = self
-      `self`.modifiers.append(
-        .accessibilityLabel(.init(verbatim: String(localized: resource)))
-      )
-      return `self`
-    }
+    #if canImport(SwiftUI) && !os(Android)
+      @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
+      public func accessibilityLabel(
+        _ resource: LocalizedStringResource
+      ) -> Self {
+        var `self` = self
+        `self`.modifiers.append(
+          .accessibilityLabel(.init(verbatim: String(localized: resource)))
+        )
+        return `self`
+      }
 
-    public func accessibilityLabel(
-      _ key: LocalizedStringKey,
-      tableName: String? = nil,
-      bundle: Bundle? = nil,
-      comment: StaticString? = nil
-    ) -> Self {
-      var `self` = self
-      `self`.modifiers.append(
-        .accessibilityLabel(.init(key, tableName: tableName, bundle: bundle, comment: comment))
-      )
-      return `self`
-    }
+      public func accessibilityLabel(
+        _ key: LocalizedStringKey,
+        tableName: String? = nil,
+        bundle: Bundle? = nil,
+        comment: StaticString? = nil
+      ) -> Self {
+        var `self` = self
+        `self`.modifiers.append(
+          .accessibilityLabel(.init(key, tableName: tableName, bundle: bundle, comment: comment))
+        )
+        return `self`
+      }
+    #endif
 
     public var accessibilityLabel: TextState? {
       for modifier in self.modifiers.reversed() {
@@ -534,135 +546,139 @@ extension TextState {
     }
   }
 
-  extension Text {
-    public init(_ state: TextState) {
-      let text: Text
-      switch state.storage {
-      case .concatenated(let first, let second):
-        text = Text(first) + Text(second)
-      case .localizedStringKey(let content, let tableName, let bundle, let comment):
-        text = .init(content, tableName: tableName, bundle: bundle, comment: comment)
-      case .localizedStringResource(let resourceBox):
-        text = resourceBox.asText()
-      case .verbatim(let content):
-        text = .init(verbatim: content)
-      }
-      self = state.modifiers.reduce(text) { text, modifier in
-        switch modifier {
-        case .accessibilityHeading(let level):
-          if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
-            return text.accessibilityHeading(level.toSwiftUI)
-          } else {
-            return text
-          }
-        case .accessibilityLabel(let value):
-          if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
-            switch value.storage {
-            case .verbatim(let string):
-              return text.accessibilityLabel(string)
-            case .localizedStringKey(let key, let tableName, let bundle, let comment):
-              return text.accessibilityLabel(
-                Text(key, tableName: tableName, bundle: bundle, comment: comment)
-              )
-            case .localizedStringResource(let resourceBox):
-              return text.accessibilityLabel(
-                resourceBox.asText()
-              )
-            case .concatenated(_, _):
-              assertionFailure("`.accessibilityLabel` does not support concatenated `TextState`")
+  // MARK: - Apple SwiftUI Text rendering
+
+  #if canImport(SwiftUI) && !os(Android)
+    extension Text {
+      public init(_ state: TextState) {
+        let text: Text
+        switch state.storage {
+        case .concatenated(let first, let second):
+          text = Text(first) + Text(second)
+        case .localizedStringKey(let content, let tableName, let bundle, let comment):
+          text = .init(content, tableName: tableName, bundle: bundle, comment: comment)
+        case .localizedStringResource(let resourceBox):
+          text = resourceBox.asText()
+        case .verbatim(let content):
+          text = .init(verbatim: content)
+        }
+        self = state.modifiers.reduce(text) { text, modifier in
+          switch modifier {
+          case .accessibilityHeading(let level):
+            if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
+              return text.accessibilityHeading(level.toSwiftUI)
+            } else {
               return text
             }
-          } else {
-            return text
-          }
-        case .accessibilityTextContentType(let type):
-          if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
-            return text.accessibilityTextContentType(type.toSwiftUI)
-          } else {
-            return text
-          }
-        case .baselineOffset(let baselineOffset):
-          return text.baselineOffset(baselineOffset)
-        case .bold(let isActive):
-          if #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *) {
-            return text.bold(isActive)
-          } else {
-            return text.bold()
-          }
-        case .font(let font):
-          return text.font(font)
-        case .fontDesign(let design):
-          if #available(iOS 16.1, macOS 13, tvOS 16.1, watchOS 9.1, *) {
-            return text.fontDesign(design)
-          } else {
-            return text
-          }
-        case .fontWeight(let weight):
-          return text.fontWeight(weight)
-        case .fontWidth(let width):
-          if #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *) {
-            return text.fontWidth(width?.toSwiftUI)
-          } else {
-            return text
-          }
-        case .foregroundColor(let color):
-          return text.foregroundColor(color)
-        case .italic(let isActive):
-          if #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *) {
-            return text.italic(isActive)
-          } else {
-            return text.italic()
-          }
-        case .kerning(let kerning):
-          return text.kerning(kerning)
-        case .monospacedDigit:
-          if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
-            return text.monospacedDigit()
-          } else {
-            return text
-          }
-        case .speechAdjustedPitch(let value):
-          if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
-            return text.speechAdjustedPitch(value)
-          } else {
-            return text
-          }
-        case .speechAlwaysIncludesPunctuation(let value):
-          if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
-            return text.speechAlwaysIncludesPunctuation(value)
-          } else {
-            return text
-          }
-        case .speechAnnouncementsQueued(let value):
-          if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
-            return text.speechAnnouncementsQueued(value)
-          } else {
-            return text
-          }
-        case .speechSpellsOutCharacters(let value):
-          if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
-            return text.speechSpellsOutCharacters(value)
-          } else {
-            return text
-          }
-        case .strikethrough(let isActive, let pattern, let color):
-          if #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *), let pattern = pattern {
-            return text.strikethrough(isActive, pattern: pattern.toSwiftUI, color: color)
-          } else {
-            return text.strikethrough(isActive, color: color)
-          }
-        case .tracking(let tracking):
-          return text.tracking(tracking)
-        case .underline(let isActive, let pattern, let color):
-          if #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *), let pattern = pattern {
-            return text.underline(isActive, pattern: pattern.toSwiftUI, color: color)
-          } else {
-            return text.underline(isActive, color: color)
+          case .accessibilityLabel(let value):
+            if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
+              switch value.storage {
+              case .verbatim(let string):
+                return text.accessibilityLabel(string)
+              case .localizedStringKey(let key, let tableName, let bundle, let comment):
+                return text.accessibilityLabel(
+                  Text(key, tableName: tableName, bundle: bundle, comment: comment)
+                )
+              case .localizedStringResource(let resourceBox):
+                return text.accessibilityLabel(
+                  resourceBox.asText()
+                )
+              case .concatenated(_, _):
+                assertionFailure("`.accessibilityLabel` does not support concatenated `TextState`")
+                return text
+              }
+            } else {
+              return text
+            }
+          case .accessibilityTextContentType(let type):
+            if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
+              return text.accessibilityTextContentType(type.toSwiftUI)
+            } else {
+              return text
+            }
+          case .baselineOffset(let baselineOffset):
+            return text.baselineOffset(baselineOffset)
+          case .bold(let isActive):
+            if #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *) {
+              return text.bold(isActive)
+            } else {
+              return text.bold()
+            }
+          case .font(let font):
+            return text.font(font)
+          case .fontDesign(let design):
+            if #available(iOS 16.1, macOS 13, tvOS 16.1, watchOS 9.1, *) {
+              return text.fontDesign(design)
+            } else {
+              return text
+            }
+          case .fontWeight(let weight):
+            return text.fontWeight(weight)
+          case .fontWidth(let width):
+            if #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *) {
+              return text.fontWidth(width?.toSwiftUI)
+            } else {
+              return text
+            }
+          case .foregroundColor(let color):
+            return text.foregroundColor(color)
+          case .italic(let isActive):
+            if #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *) {
+              return text.italic(isActive)
+            } else {
+              return text.italic()
+            }
+          case .kerning(let kerning):
+            return text.kerning(kerning)
+          case .monospacedDigit:
+            if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
+              return text.monospacedDigit()
+            } else {
+              return text
+            }
+          case .speechAdjustedPitch(let value):
+            if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
+              return text.speechAdjustedPitch(value)
+            } else {
+              return text
+            }
+          case .speechAlwaysIncludesPunctuation(let value):
+            if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
+              return text.speechAlwaysIncludesPunctuation(value)
+            } else {
+              return text
+            }
+          case .speechAnnouncementsQueued(let value):
+            if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
+              return text.speechAnnouncementsQueued(value)
+            } else {
+              return text
+            }
+          case .speechSpellsOutCharacters(let value):
+            if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
+              return text.speechSpellsOutCharacters(value)
+            } else {
+              return text
+            }
+          case .strikethrough(let isActive, let pattern, let color):
+            if #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *), let pattern = pattern {
+              return text.strikethrough(isActive, pattern: pattern.toSwiftUI, color: color)
+            } else {
+              return text.strikethrough(isActive, color: color)
+            }
+          case .tracking(let tracking):
+            return text.tracking(tracking)
+          case .underline(let isActive, let pattern, let color):
+            if #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *), let pattern = pattern {
+              return text.underline(isActive, pattern: pattern.toSwiftUI, color: color)
+            } else {
+              return text.underline(isActive, color: color)
+            }
           }
         }
       }
     }
-  }
+  #endif
 #endif
 
 extension String {
@@ -755,7 +771,7 @@ extension TextState: CustomDumpRepresentable {
           </\(name)>
           """
       }
-      #if canImport(SwiftUI) && !os(Android)
+      #if canImport(SwiftUI) || canImport(SkipSwiftUI)
         for modifier in textState.modifiers {
           switch modifier {
           case .accessibilityHeading(let headingLevel):
@@ -846,15 +862,17 @@ extension TextState: CustomDumpRepresentable {
   }
 }
 
+// MARK: - Android Text rendering
+
 #if os(Android)
   import SwiftUI
 
   extension Text {
     /// Creates a SwiftUI `Text` view from `TextState`.
     ///
-    /// On Android, this handles verbatim and concatenated text (no rich text modifiers).
-    /// Note: Text concatenation (`+`) is unavailable in SkipSwiftUI, so concatenated
-    /// text is flattened to a single verbatim string.
+    /// On Android, this handles verbatim and concatenated text. Formatting modifiers (bold, italic,
+    /// font, foregroundColor) are stored in TextState but rendered as plain text because SkipSwiftUI's
+    /// Text concatenation (`+`) is unavailable. Rich text rendering may be added in the future.
     public init(_ state: TextState) {
       self = Text(verbatim: state._plainText)
     }
