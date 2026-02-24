@@ -34,7 +34,7 @@ let package = Package(
     .package(url: "https://github.com/apple/swift-collections", from: "1.0.0"),
     .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.0.0"),
     .package(path: "../swift-case-paths"),
-    .package(url: "https://github.com/pointfreeco/swift-concurrency-extras", from: "1.2.0"),
+    .package(path: "../swift-concurrency-extras"),
     .package(path: "../swift-custom-dump"),
     .package(path: "../swift-perception"),
     .package(path: "../xctest-dynamic-overlay"),
