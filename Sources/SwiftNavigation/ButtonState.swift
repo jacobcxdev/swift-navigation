@@ -2,7 +2,7 @@ import CustomDump
 import Foundation
 import IssueReporting
 
-#if canImport(SwiftUI) && !os(Android)
+#if canImport(SwiftUI)
   import SwiftUI
 #endif
 
@@ -63,7 +63,7 @@ public struct ButtonState<Action>: Identifiable {
     switch self.action.type {
     case .send(let action):
       perform(action)
-    #if canImport(SwiftUI) && !os(Android)
+    #if canImport(SwiftUI)
       case .animatedSend(let action, let animation):
         withAnimation(animation) {
           perform(action)
@@ -83,7 +83,7 @@ public struct ButtonState<Action>: Identifiable {
     switch self.action.type {
     case .send(let action):
       await perform(action)
-    #if canImport(SwiftUI) && !os(Android)
+    #if canImport(SwiftUI)
       case .animatedSend(let action, _):
         var output = ""
         customDump(self.action, to: &output, indent: 4)
@@ -126,7 +126,7 @@ public struct ButtonStateAction<Action> {
     .init(type: .send(action))
   }
 
-  #if canImport(SwiftUI) && !os(Android)
+  #if canImport(SwiftUI)
     public static func send(_ action: Action?, animation: Animation?) -> Self {
       .init(type: .animatedSend(action, animation: animation))
     }
@@ -134,7 +134,7 @@ public struct ButtonStateAction<Action> {
 
   public var action: Action? {
     switch self.type {
-    #if canImport(SwiftUI) && !os(Android)
+    #if canImport(SwiftUI)
       case .animatedSend(let action, animation: _):
         return action
     #endif
@@ -147,7 +147,7 @@ public struct ButtonStateAction<Action> {
     _ transform: (Action?) -> NewAction?
   ) -> ButtonStateAction<NewAction> {
     switch self.type {
-    #if canImport(SwiftUI) && !os(Android)
+    #if canImport(SwiftUI)
       case .animatedSend(let action, let animation):
         return .send(transform(action), animation: animation)
     #endif
@@ -158,7 +158,7 @@ public struct ButtonStateAction<Action> {
 
   public enum _ActionType {
     case send(Action?)
-    #if canImport(SwiftUI) && !os(Android)
+    #if canImport(SwiftUI)
       case animatedSend(Action?, animation: Animation?)
     #endif
   }
@@ -206,7 +206,7 @@ extension ButtonStateAction: CustomDumpReflectable {
         ],
         displayStyle: .enum
       )
-    #if canImport(SwiftUI) && !os(Android)
+    #if canImport(SwiftUI)
       case .animatedSend(let action, let animation):
         return Mirror(
           self,
@@ -235,7 +235,7 @@ extension ButtonStateAction: Hashable where Action: Hashable {}
 extension ButtonStateAction._ActionType: Hashable where Action: Hashable {
   public func hash(into hasher: inout Hasher) {
     switch self {
-    #if canImport(SwiftUI) && !os(Android)
+    #if canImport(SwiftUI)
       case .animatedSend(let action, animation: _):
         hasher.combine(action)  // TODO: Should we hash the animation?
     #endif
@@ -257,7 +257,7 @@ extension ButtonStateAction: Sendable where Action: Sendable {}
 extension ButtonStateAction._ActionType: Sendable where Action: Sendable {}
 extension ButtonState: Sendable where Action: Sendable {}
 
-#if canImport(SwiftUI) && !os(Android)
+#if canImport(SwiftUI)
   // MARK: - SwiftUI bridging
 
   extension Alert.Button {
