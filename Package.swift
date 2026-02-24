@@ -33,17 +33,17 @@ let package = Package(
   dependencies: [
     .package(url: "https://github.com/apple/swift-collections", from: "1.0.0"),
     .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.0.0"),
-    .package(url: "https://github.com/pointfreeco/swift-case-paths", from: "1.5.6"),
+    .package(path: "../swift-case-paths"),
     .package(url: "https://github.com/pointfreeco/swift-concurrency-extras", from: "1.2.0"),
-    .package(url: "https://github.com/jacobcxdev/swift-custom-dump", from: "1.3.2"),
-    .package(url: "https://github.com/jacobcxdev/swift-perception", branch: "flote/service-app"),
-    .package(url: "https://github.com/pointfreeco/xctest-dynamic-overlay", from: "1.4.1"),
+    .package(path: "../swift-custom-dump"),
+    .package(path: "../swift-perception"),
+    .package(path: "../xctest-dynamic-overlay"),
   ]
     + (android ? [
       .package(url: "https://source.skip.tools/skip-bridge.git", "0.16.4"..<"2.0.0"),
-      .package(url: "https://source.skip.tools/skip-android-bridge.git", "0.6.1"..<"2.0.0"),
+      .package(path: "../skip-android-bridge"),
       .package(url: "https://source.skip.tools/swift-jni.git", "0.3.1"..<"2.0.0"),
-      .package(url: "https://source.skip.tools/skip-fuse-ui.git", from: "1.0.0"),
+      .package(path: "../skip-fuse-ui"),
     ] : []),
   targets: [
     .target(
