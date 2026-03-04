@@ -260,6 +260,8 @@ extension ButtonState: Sendable where Action: Sendable {}
 #if canImport(SwiftUI)
   // MARK: - SwiftUI bridging
 
+  #if !os(Android)
+  // Alert is deprecated and not provided by SkipSwiftUI.
   extension Alert.Button {
     /// Initializes a `SwiftUI.Alert.Button` from `ButtonState` and an action handler.
     ///
@@ -301,7 +303,10 @@ extension ButtonState: Sendable where Action: Sendable {}
       }
     }
   }
+  #endif  // !os(Android) — Alert.Button
 
+  #if !os(Android)
+  // Android has its own simplified Button.init and ButtonRole.init below.
   @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
   extension ButtonRole {
     public init(_ role: ButtonStateRole) {
@@ -354,6 +359,7 @@ extension ButtonState: Sendable where Action: Sendable {}
       }
     }
   }
+  #endif
 #endif
 
 @usableFromInline
